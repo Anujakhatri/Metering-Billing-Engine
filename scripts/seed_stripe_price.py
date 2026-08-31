@@ -1,7 +1,16 @@
-from app.database import SessionLocal
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath("."))
+
+from app.database import SessionLocal, Base, engine
 from app.models import Plan
 
+# Ensure tables exist
+Base.metadata.create_all(bind=engine)
+
 db = SessionLocal()
+
 pro_plan = db.query(Plan).filter(Plan.name == "pro").first()
 
 if not pro_plan:

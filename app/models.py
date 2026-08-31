@@ -13,10 +13,11 @@ class Tenant(Base):
 class Plan(Base):
     __tablename__ = "plans"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(String,unique=True, nullable=False)
+    name = Column(String, unique=True, nullable=False)
     api_call_limit = Column(Integer, nullable=False)
     ai_token_limit = Column(Integer, nullable=False)
     price_cents = Column(Integer, nullable=False, default=0)
+    stripe_price_id = Column(String, nullable=True)
     
 class Subscription(Base):
     __tablename__ = "subscriptions"
