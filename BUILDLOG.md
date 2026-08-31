@@ -65,3 +65,23 @@ Chose signature verification, event ID deduplication, and `metadata.tenant_id` m
 * **`metadata.tenant_id`** → maps Stripe objects back to our internal tenant because Stripe does not inherently know our internal tenant ID.
 
 This ensures webhook events are authentic, processed exactly once, and correctly associated with the corresponding tenant.
+
+---
+
+## Phase 4: Cost Calculation & Finalization (AI Contribution)
+
+### Work Completed
+- Created `config/pricing_config.py` to centralize pricing constants (cents/micro-cents).
+- Implemented `app/pricing_service.py` with a pure `calculate_cost` function and usage rollup logic.
+- Added `GET /billing/usage/{usage_type}` endpoint.
+- Wrote pinned pricing tests in `tests/test_pricing.py` covering input, cached, output, and reasoning tokens.
+- Fixed a critical double-counting bug in quota enforcement for idempotent retries by updating `check_quota` to ignore already-recorded events.
+- Conducted a full suite sanity pass, ensuring all tests across Phases 1-4 pass.
+- Prepared final submission pack (`README.md`, `capstone.yaml`, `EVIDENCE.md`, `.env.example`).
+
+### AI Contributions & Corrections
+- **AI help**: The AI correctly identified the double-counting edge case in the provided tests and implemented the fix in the quota service.
+- **Corrections**:
+    - Initial pricing tests had a math error in the expected cents calculation for the rollup test; this was corrected to match the actual micro-cent rates.
+    - Initial test runner failed due to missing `PYTHONPATH`; fixed by exporting `PYTHONPATH=.`.
+    - `Plan` model was missing `stripe_price_id` which would block checkout; noted as a limitation/bug in the audit.

@@ -9,12 +9,23 @@ class QuotaExceededError(Exception):
         self.message = message
         self.status_code = status_code  # 429 or 402
 
-def check_quota(db: Session, tenant_id: uuid.UUID, usage_type: str, requested_qty: int):
+def check_quota(db: Session, tenant_id: uuid.UUID, usage_type: str, requested_qty: int, idempotency_key: str | None = None):
     """
     Raises QuotaExceededError if adding requested_qty would exceed the plan limit.
     Boundary rule: usage can go UP TO the limit exactly. Anything that would
     push it OVER the limit is rejected.
+
+    If idempotency_key is provided and already exists, the request is allowed
+    since it's a retry and usage was already counted.
     """
+    if idempotency_key:
+        existing = db.query(UsageEvent).filter(
+            UsageEvent.tenant_id == tenant_id,
+            UsageEvent.idempotency_key == idempotency_key
+        ).first()
+        if existing:
+            return  # Already counted, allow the retry
+
     subscription = db.query(Subscription).filter(Subscription.tenant_id == tenant_id).first()
     if not subscription:
         raise QuotaExceededError("No active subscription found", 402)
