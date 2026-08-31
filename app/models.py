@@ -1,8 +1,8 @@
 import uuid
-from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, JSON, UniqueConstraint
+from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, JSON, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from database import Base
+from app.database import Base
 
 class Tenant(Base):
     __tablename__ = "tenants"
