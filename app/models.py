@@ -41,3 +41,10 @@ class UsageEvent(Base):
     __table_args__ = (
         UniqueConstraint("tenant_id", "idempotency_key", name="uq_tenant_idempotency"),
     )
+    
+class WebhookEvent(Base):
+    __tablename__ = "webhook_events"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    stripe_event_id = Column(String, unique=True, nullable=False)
+    type = Column(String, nullable=False)
+    received_at = Column(DateTime(timezone=True), server_default=func.now())

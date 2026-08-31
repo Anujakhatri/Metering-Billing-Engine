@@ -55,3 +55,13 @@ QuotaExceededError → converted to HTTP 429 when the requested usage would exce
 DuplicateRequestError → treated as a successful retry and the original usage event is returned with duplicate=True.
 
 This ensures that a client retry does not create a second usage event or double-count usage for billing.
+
+### Stripe Webhook Handling
+
+Chose signature verification, event ID deduplication, and `metadata.tenant_id` mapping for webhook processing.
+
+* **Signature verification** → prevents fake requests from modifying subscription or billing state.
+* **Event ID deduplication** → protects against Stripe's at-least-once event delivery and prevents duplicate processing.
+* **`metadata.tenant_id`** → maps Stripe objects back to our internal tenant because Stripe does not inherently know our internal tenant ID.
+
+This ensures webhook events are authentic, processed exactly once, and correctly associated with the corresponding tenant.
