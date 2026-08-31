@@ -1,0 +1,9 @@
+run: uvicorn app.main:app --reload --port 8000
+seed: python scripts/seed_stripe_price.py
+test: export PYTHONPATH=$PYTHONPATH:. && pytest tests/
+base_url: http://localhost:8000
+endpoints:
+  - POST /billing/generate
+  - GET /billing/usage/{usage_type}
+  - POST /webhooks/stripe
+  - POST /checkout
